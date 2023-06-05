@@ -8,5 +8,4 @@ Observe que se o atributo cores tiver mais de uma cor, ou seja, for multivalorad
 Se a API tiver mais de uma página de resposta a aplicação faz recursivamente novas requisições.
 
 Esta ideia foi motivada pela criação do site da api do Star Wars: https://github.com/JohanGarciaO/star-wars.
-
 Como as requisições retornavam respostas em inglês, resolvi criar JSONs de chave e valor com as traduções, e então para que fosse possível a identificação de todos os tipos de resposta sem precisar olhar manualmente de uma por uma criei esta APP que faz todo o trabalho duro.
