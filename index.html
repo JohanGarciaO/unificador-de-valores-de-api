@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unificador de itens com API</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="shortcut icon" href="./favicon.png" type="image/x-icon"/>
+    <script src="./script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="container-inputs">
+
+            <h2>Unificador de itens de lista de API</h2>
+
+            <div class="inputs">
+                <input name="api" type="text" id="api" placeholder="Aqui vai seu endpoint">
+                <input name="token" type="text" id="token" placeholder="Aqui vai a palavra-chave">
+            </div>
+
+            <div class="buttons">
+                <button class="btn" id="btn">Unificar</button>
+                <button class="btn btn-reunificar none" id="btn-reunificar">Reunificar resultado</button>
+            </div>
+
+        </div>
+
+        <div class="container-result">
+            <div class="content" id="content">
+                <!-- <div class="loading"></div> -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <span class="copy">Copyright &copy; 2023 <a href="https://github.com/JohanGarciaO" target="_blank">Johan Garcia</a></span>
+    </footer>
+</body>
+</html>
