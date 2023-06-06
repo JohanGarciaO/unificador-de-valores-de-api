@@ -7,7 +7,7 @@ Observe que se o atributo cores tiver mais de uma cor, ou seja, for multivalorad
 
 Se a API tiver mais de uma página de resposta a aplicação faz recursivamente novas requisições. Ela tentará buscar novos resultados caso na resposta exista um atributo chamado "next" com o endpoint da próxima página de resultados.
 
-Atenção: só haverá resultados caso em algum local resposta (seja direta ou indiretamente) haja um array de objetos, pois a finalidade desta aplicação é justamente unificar os valores de um atributo presente em vários objetos.
+Atenção: só haverá resultados caso em algum local da resposta (seja direta ou indiretamente) haja um array de objetos, pois a finalidade desta aplicação é justamente unificar os valores de um atributo presente em vários objetos.
 
 **********************************************************************************************************
 
