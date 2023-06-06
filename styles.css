@@ -42,10 +42,6 @@ body {
     overflow-y: auto;
 }
 
-.container-result:hover .content {
-    width: calc(100% + 16px);
-}
-
 .container-result::-webkit-scrollbar {
     width: 16px; /* width of the entire scrollbar */
 }
@@ -83,6 +79,12 @@ body {
     font-size: 14px;
     row-gap: 2px;
     width: 100%;
+}
+
+.resultsTotal {
+    margin-bottom: 10px;
+    color: #d6d6d6;
+    font-size: 12px;
 }
 
 .div {
@@ -251,6 +253,7 @@ span a:hover {
     .container-result {
         width: 80%;
         height: auto;
+        margin-bottom: 50px;
     }
     .content {
         width: 100%;

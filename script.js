@@ -1,6 +1,23 @@
-let currentPageUrl = 'https://swapi.dev/api/planets'
-let token = 'climate'
-let listUnique = []
+let currentPageUrl = ''
+let token = ''
+let uniqueList = []
+let timeRequest = 0
+let erroAPI = false
+
+function searchArray(object) {
+    if (Array.isArray(object)) {
+        return object
+    } else {
+        const keys = Object.keys(object)
+        for (let i = 0; i < keys.length; i++) {
+            if (Array.isArray(object[keys[i]])) {
+                return object[keys[i]]
+            } else if (typeof (object[keys[i]]) == 'object' && object[keys[i]] != null && object[keys[i]] != undefined) {
+                return searchArray(object[keys[i]])
+            }
+        }
+    }
+}
 
 async function catchUniqueData(url, token) {
 
@@ -9,23 +26,27 @@ async function catchUniqueData(url, token) {
     try {
         const response = await fetch(url)
         const data = await response.json()
+        let arrayList = []
 
-        let planetas = data.results.map((planeta) => {
+        arrayList = searchArray(data)
+
+        let uniqueValues = arrayList.map((planeta) => {
             return planeta[token]
         })
 
-        planetas = valuesUniques(planetas)
+        uniqueValues = valuesUniques(uniqueValues)
 
-        planetas = planetas.concat(await catchUniqueData(data.next, token))
-        listUnique = await planetas
+        uniqueValues = uniqueValues.concat(await catchUniqueData(data.next, token))
+        uniqueList = await uniqueValues
         callReunificar()
-        return listUnique
+        erroAPI = false
+        return uniqueList
     } catch (error) {
         console.log('erro na api', error)
-        listUnique = ['Não foi possível bater seu endpoint, verifique se você digitou corretamente e tente novamente.', '']
+        uniqueList = ['Não foi possível bater seu endpoint, verifique se você digitou corretamente e tente novamente.', '']
         disabledReunificar()
+        erroAPI = true
     }
-
 }
 
 function valuesUniques(arr) {
@@ -47,10 +68,9 @@ function clearResult() {
 
 function writeValues(arr) {
     clearResult()
+
     arr.forEach((value) => {
-
         const content = document.getElementById('content')
-
         const span = document.createElement("span")
         span.className = 'itemList'
         span.innerText = value
@@ -60,8 +80,28 @@ function writeValues(arr) {
 
         content.appendChild(span)
         content.appendChild(div)
-
     })
+    btn.disabled = false
+}
+
+function qtdResult() {
+    let res = 0
+
+    if (uniqueList[0] == undefined) {
+        res = 0
+    } else {
+        res = uniqueList.length
+    }
+
+    const content = document.getElementById('content')
+    const span = document.createElement("span")
+    span.className = 'itemList resultsTotal'
+    span.innerText = `${res} resultados (${timeRequest} segundos)`
+
+    const div = document.createElement("div")
+    div.className = 'div'
+    content.insertBefore(div, content.firstChild)
+    content.insertBefore(span, content.firstChild)
 }
 
 function loading() {
@@ -81,36 +121,49 @@ function loading() {
 
 async function catchArrayUnique() {
     loading()
+
+    timeRequest = performance.now()
     await catchUniqueData(currentPageUrl, token)
-    listUnique.pop()
-    listUnique = valuesUniques(listUnique)
-    writeValues(listUnique)
+    timeRequest = (((performance.now() - timeRequest) / 1000).toFixed(2)).replace('.', ',')
+
+    uniqueList.pop()
+    uniqueList = valuesUniques(uniqueList)
+
+    if (!uniqueList[0]) {
+        writeValues(['Atributo inexistente no endpoint'])
+        disabledReunificar()
+        qtdResult()
+    } else if (erroAPI) {
+        writeValues(uniqueList)
+    } else {
+        writeValues(uniqueList)
+        qtdResult()
+    }
 }
 
 const btn = document.getElementById('btn')
-const api = document.getElementById('api')
 const keyword = document.getElementById('token')
 
-btn.addEventListener('click', () => {
+function btnUnificar() {
+    const api = document.getElementById('api')
     if (api.value && keyword.value) {
         currentPageUrl = api.value
         token = keyword.value
         catchArrayUnique()
+        btn.disabled = true
     } else {
-        writeValues(['Você não pode deixar nenhum campo em branco.'])
+        uniqueList = ['Você não pode deixar nenhum campo em branco.']
+        writeValues(uniqueList)
         disabledReunificar()
     }
+}
+
+btn.addEventListener('click', () => {
+    btnUnificar()
 })
 keyword.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        if (api.value && keyword.value) {
-            currentPageUrl = api.value
-            token = keyword.value
-            catchArrayUnique()
-        } else {
-            writeValues(['Você não pode deixar nenhum campo em branco.'])
-            disabledReunificar()
-        }
+    if (e.key === 'Enter' && btn.disabled == false) {
+        btnUnificar()
     }
 })
 
@@ -130,11 +183,30 @@ function reunificar(arr) {
     arr = arr.split(',')
     arr = valuesUniques(arr)
 
-    listUnique = arr
-    return listUnique
+    uniqueList = arr
+    return uniqueList
 }
 
 btnReunificar.addEventListener('click', () => {
-    reunificar(listUnique)
-    writeValues(listUnique)
+    if (uniqueList[0]) {
+        reunificar(uniqueList)
+        writeValues(uniqueList)
+        qtdResult()
+    }
+})
+
+// correção do bug do Scoll
+
+const containerResult = document.getElementById('container-result')
+
+containerResult.addEventListener(('mouseover'), () => {
+    const content = document.getElementById('content')
+    const body = document.getElementsByTagName('body')[0]
+    if (content.clientHeight >= 417 && body.clientWidth > 580) content.style.width = 'calc(100% + 16px)'
+})
+
+containerResult.addEventListener(('mouseout'), () => {
+    const content = document.getElementById('content')
+    const body = document.getElementsByTagName('body')[0]
+    if (content.clientHeight >= 417 && body.clientWidth > 580) content.style.width = '100%'
 })
